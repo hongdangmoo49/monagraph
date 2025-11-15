@@ -1,11 +1,4 @@
-import {
-  getArbitrumBlockLatency,
-  getAvalancheBlockLatency,
-  getEthereumBlockLatency,
-  getMonadBlockLatency,
-  getPolygonBlockLatency,
-  getSolanaSlotLatency,
-} from "~~/utils/rpc/latency";
+import { getLatencyData } from "~~/utils/rpc/latency";
 
 type LatencyStatus =
   | {
@@ -21,75 +14,31 @@ type LatencyStatus =
       reason: string;
     };
 
-type LatencyTarget = {
-  chain: string;
-  endpoint: string;
-  measureLatency: () => Promise<number>;
-};
-
-const SOLANA_MAINNET_ENDPOINT = "https://api.mainnet-beta.solana.com";
-const MONAD_TESTNET_ENDPOINT = "https://testnet-rpc.monad.xyz";
-const POLYGON_MAINNET_ENDPOINT = "https://polygon-rpc.com";
-const AVALANCHE_C_CHAIN_ENDPOINT = "https://api.avax.network/ext/bc/C/rpc";
-const ARBITRUM_ONE_ENDPOINT = "https://arb1.arbitrum.io/rpc";
-const ETHEREUM_MAINNET_ENDPOINT = "https://eth.llamarpc.com";
-
-const RPC_LATENCY_TARGETS: LatencyTarget[] = [
-  {
-    chain: "Solana Mainnet",
-    endpoint: SOLANA_MAINNET_ENDPOINT,
-    measureLatency: () => getSolanaSlotLatency(SOLANA_MAINNET_ENDPOINT),
-  },
-  {
-    chain: "Monad Testnet",
-    endpoint: MONAD_TESTNET_ENDPOINT,
-    measureLatency: () => getMonadBlockLatency(MONAD_TESTNET_ENDPOINT),
-  },
-  {
-    chain: "Polygon Mainnet",
-    endpoint: POLYGON_MAINNET_ENDPOINT,
-    measureLatency: () => getPolygonBlockLatency(POLYGON_MAINNET_ENDPOINT),
-  },
-  {
-    chain: "Avalanche C-Chain",
-    endpoint: AVALANCHE_C_CHAIN_ENDPOINT,
-    measureLatency: () => getAvalancheBlockLatency(AVALANCHE_C_CHAIN_ENDPOINT),
-  },
-  {
-    chain: "Arbitrum One",
-    endpoint: ARBITRUM_ONE_ENDPOINT,
-    measureLatency: () => getArbitrumBlockLatency(ARBITRUM_ONE_ENDPOINT),
-  },
-  {
-    chain: "Ethereum Mainnet",
-    endpoint: ETHEREUM_MAINNET_ENDPOINT,
-    measureLatency: () => getEthereumBlockLatency(ETHEREUM_MAINNET_ENDPOINT),
-  },
-];
-
 const gatherLatencyStatuses = async (): Promise<LatencyStatus[]> => {
-  const measurements = await Promise.all(
-    RPC_LATENCY_TARGETS.map(async (target): Promise<LatencyStatus> => {
-      try {
-        const latencyMs = await target.measureLatency();
+  try {
+    const data = await getLatencyData();
+
+    return data.networks.map(network => {
+      if (network.averageLatencyMs !== null) {
         return {
-          chain: target.chain,
-          endpoint: target.endpoint,
-          status: "healthy",
-          latencyMs,
+          chain: network.chain,
+          endpoint: network.endpoint,
+          status: "healthy" as const,
+          latencyMs: network.averageLatencyMs,
         };
-      } catch (error) {
+      } else {
         return {
-          chain: target.chain,
-          endpoint: target.endpoint,
-          status: "error",
-          reason: error instanceof Error ? error.message : "Unknown error",
+          chain: network.chain,
+          endpoint: network.endpoint,
+          status: "error" as const,
+          reason: network.error || "데이터 수집 중입니다...",
         };
       }
-    }),
-  );
-
-  return measurements;
+    });
+  } catch (error) {
+    console.error("[RpcLatencySection] Failed to get latency data:", error);
+    return [];
+  }
 };
 
 const formatLatency = (latencyMs: number): string => `${latencyMs.toLocaleString()} ms`;
