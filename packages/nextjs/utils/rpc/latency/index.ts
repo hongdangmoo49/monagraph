@@ -1,10 +1,7 @@
-export * from "./types";
-export * from "./monitor";
-export * from "./solana";
-export * from "./monad";
-export * from "./polygon";
-export * from "./avalanche";
-export * from "./arbitrum";
-export * from "./blockTimestampLatency";
-export * from "./sources/blockTimestampClock";
-export * from "./probes/blockTimestampLatencyProbe";
+// Client exports (for client components and API routes)
+export * from "./client/types";
+export * from "./client/api";
+
+// Server exports (for server components and API routes)
+export { getLatencyData } from "./server/api";
+export type { LatencySnapshot, RpcLatencyProbe } from "./server/types";
