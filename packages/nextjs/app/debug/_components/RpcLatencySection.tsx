@@ -1,6 +1,7 @@
 import {
   getArbitrumBlockLatency,
   getAvalancheBlockLatency,
+  getEthereumBlockLatency,
   getMonadBlockLatency,
   getPolygonBlockLatency,
   getSolanaSlotLatency,
@@ -31,6 +32,7 @@ const MONAD_TESTNET_ENDPOINT = "https://testnet-rpc.monad.xyz";
 const POLYGON_MAINNET_ENDPOINT = "https://polygon-rpc.com";
 const AVALANCHE_C_CHAIN_ENDPOINT = "https://api.avax.network/ext/bc/C/rpc";
 const ARBITRUM_ONE_ENDPOINT = "https://arb1.arbitrum.io/rpc";
+const ETHEREUM_MAINNET_ENDPOINT = "https://eth.llamarpc.com";
 
 const RPC_LATENCY_TARGETS: LatencyTarget[] = [
   {
@@ -57,6 +59,11 @@ const RPC_LATENCY_TARGETS: LatencyTarget[] = [
     chain: "Arbitrum One",
     endpoint: ARBITRUM_ONE_ENDPOINT,
     measureLatency: () => getArbitrumBlockLatency(ARBITRUM_ONE_ENDPOINT),
+  },
+  {
+    chain: "Ethereum Mainnet",
+    endpoint: ETHEREUM_MAINNET_ENDPOINT,
+    measureLatency: () => getEthereumBlockLatency(ETHEREUM_MAINNET_ENDPOINT),
   },
 ];
 

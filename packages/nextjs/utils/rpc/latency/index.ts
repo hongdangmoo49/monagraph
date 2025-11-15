@@ -5,6 +5,7 @@ export * from "./monad";
 export * from "./polygon";
 export * from "./avalanche";
 export * from "./arbitrum";
+export * from "./ethereum";
 export * from "./blockTimestampLatency";
 export * from "./sources/blockTimestampClock";
 export * from "./probes/blockTimestampLatencyProbe";
