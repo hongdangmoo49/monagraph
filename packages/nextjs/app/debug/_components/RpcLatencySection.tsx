@@ -1,4 +1,10 @@
-import { getMonadBlockLatency, getSolanaSlotLatency } from "~~/utils/rpc/latency";
+import {
+  getArbitrumBlockLatency,
+  getAvalancheBlockLatency,
+  getMonadBlockLatency,
+  getPolygonBlockLatency,
+  getSolanaSlotLatency,
+} from "~~/utils/rpc/latency";
 
 type LatencyStatus =
   | {
@@ -22,6 +28,9 @@ type LatencyTarget = {
 
 const SOLANA_MAINNET_ENDPOINT = "https://api.mainnet-beta.solana.com";
 const MONAD_TESTNET_ENDPOINT = "https://testnet-rpc.monad.xyz";
+const POLYGON_MAINNET_ENDPOINT = "https://polygon-rpc.com";
+const AVALANCHE_C_CHAIN_ENDPOINT = "https://api.avax.network/ext/bc/C/rpc";
+const ARBITRUM_ONE_ENDPOINT = "https://arb1.arbitrum.io/rpc";
 
 const RPC_LATENCY_TARGETS: LatencyTarget[] = [
   {
@@ -33,6 +42,21 @@ const RPC_LATENCY_TARGETS: LatencyTarget[] = [
     chain: "Monad Testnet",
     endpoint: MONAD_TESTNET_ENDPOINT,
     measureLatency: () => getMonadBlockLatency(MONAD_TESTNET_ENDPOINT),
+  },
+  {
+    chain: "Polygon Mainnet",
+    endpoint: POLYGON_MAINNET_ENDPOINT,
+    measureLatency: () => getPolygonBlockLatency(POLYGON_MAINNET_ENDPOINT),
+  },
+  {
+    chain: "Avalanche C-Chain",
+    endpoint: AVALANCHE_C_CHAIN_ENDPOINT,
+    measureLatency: () => getAvalancheBlockLatency(AVALANCHE_C_CHAIN_ENDPOINT),
+  },
+  {
+    chain: "Arbitrum One",
+    endpoint: ARBITRUM_ONE_ENDPOINT,
+    measureLatency: () => getArbitrumBlockLatency(ARBITRUM_ONE_ENDPOINT),
   },
 ];
 
